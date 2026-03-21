@@ -730,16 +730,16 @@ namespace motorbit {
             }
 
             // encoder correction: slow down whichever wheel has gone farther
-            // multiply by dir so correction is correct for both forward and backward
-            let corr = Math.round(KP_ENC * (leftCm - rightCm) * dir)
+            // (leftCm - rightCm) < 0 when right > left, giving corr < 0 → left gets more speed → correct for both forward and backward
+            let corr = Math.round(KP_ENC * (leftCm - rightCm))
 
-            // IMU heading correction: drifting right → steer left
+            // IMU heading correction: multiply by dir so correction flips correctly when going backward
             if (_imu_initialized) {
                 let hdgErr = getRobotYaw() - startYaw
                 while (hdgErr > 180) hdgErr -= 360
                 while (hdgErr < -180) hdgErr += 360
-                // hdgErr > 0 = drifted right → steer left → slow left, speed right → corr positive
-                corr += Math.round(KP_HDG * hdgErr * _dt_imuInvert)
+                // hdgErr > 0 = drifted CW → corr += negative when backward (dir=-1) → left gets more → CCW
+                corr += Math.round(KP_HDG * hdgErr * _dt_imuInvert * dir)
             }
 
             if (corr > MAX_CORR) corr = MAX_CORR
@@ -1121,13 +1121,13 @@ namespace motorbit {
     //% block="Setup Robot|Left Motor %leftMotor Encoder %leftPin|Right Motor %rightMotor Encoder %rightPin|Wheel Dia L (cm) %leftWheelDia R (cm) %rightWheelDia|Track Width (cm) %trackWidth Ticks/Rev %ticksPerRev"
     //% group="Gorilla Go"
     //% weight=100
-    //% leftMotor.defl=motorbit.Motors.M1
-    //% leftPin.defl=DigitalPin.P13
+    //% leftMotor.defl=motorbit.Motors.M4
+    //% leftPin.defl=DigitalPin.P2
     //% rightMotor.defl=motorbit.Motors.M3
-    //% rightPin.defl=DigitalPin.P14
-    //% leftWheelDia.defl=6.9
-    //% rightWheelDia.defl=6.9
-    //% trackWidth.defl=11.5
+    //% rightPin.defl=DigitalPin.P0
+    //% leftWheelDia.defl=4.8
+    //% rightWheelDia.defl=4.8
+    //% trackWidth.defl=8.8
     //% ticksPerRev.defl=270
     //% inlineInputMode=external
     export function setupRobot(

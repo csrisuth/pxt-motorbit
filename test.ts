@@ -18,7 +18,21 @@
 // music.playTone(262, music.beat(BeatFraction.Whole))
 // basic.pause(100)
 // music.stopAllSounds()
+
+motorbit.setupRobot(
+    motorbit.Motors.M4, DigitalPin.P2,
+    motorbit.Motors.M3, DigitalPin.P0,
+    4.8, 4.8,
+    8.8, 270
+)
+
+motorbit.driveDistanceStraight(40, 100)
+basic.pause(500)
+motorbit.driveDistanceStraight(-40, 100)
+
+
 basic.forever(function () {
+
 //     motorbit.MotorRun(motorbit.Motors.M1, 255)
 //     motorbit.MotorRun(motorbit.Motors.M2, 255)
 //     motorbit.MotorRun(motorbit.Motors.M3, 255)
