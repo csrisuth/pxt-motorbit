@@ -121,8 +121,8 @@ namespace motorbit {
     let _dt_turnK = 1.00
 
     // Motor direction: 1 = normal, -1 = inverted (set via setMotorDirection block)
-    let _dt_leftInvert: number = 1;
-    let _dt_rightInvert: number = -1;   // right motor is physically reversed by default
+    let _dt_leftInvert: number = -1;
+    let _dt_rightInvert: number = 1;   // right motor is physically reversed by default
 
     // IMU yaw direction: 1 = normal, -1 = inverted (set if BNO055 is mounted upside-down)
     let _dt_imuInvert: number = 1;
@@ -552,9 +552,9 @@ namespace motorbit {
     //% block="Setup Drive Train|Left: %leftMotor Pin %leftPin Wheel Dia (cm) %leftWheelDia|Right: %rightMotor Pin %rightPin Wheel Dia (cm) %rightWheelDia|Track Width (cm) %trackWidth|Ticks/Rev %ticksPerRev"
     //% group="DriveTrain"
     //% weight=90
-    //% leftWheelDia.defl=4.8
-    //% rightWheelDia.defl=4.8
-    //% trackWidth.defl=8.8
+    //% leftWheelDia.defl=6.9
+    //% rightWheelDia.defl=6.9
+    //% trackWidth.defl=11.5
     //% ticksPerRev.defl=270
     //% inlineInputMode=external
     export function setDriveTrain(
@@ -1118,15 +1118,15 @@ namespace motorbit {
      */
     //% blockId=motorbit_setup_robot
     //% block="Setup Robot|Left Motor %leftMotor Encoder %leftPin|Right Motor %rightMotor Encoder %rightPin|Wheel Dia L (cm) %leftWheelDia R (cm) %rightWheelDia|Track Width (cm) %trackWidth Ticks/Rev %ticksPerRev"
-    //% group="Robot Setup"
+    //% group="Gorilla Go"
     //% weight=100
     //% leftMotor.defl=motorbit.Motors.M1
     //% leftPin.defl=DigitalPin.P13
     //% rightMotor.defl=motorbit.Motors.M3
     //% rightPin.defl=DigitalPin.P14
-    //% leftWheelDia.defl=4.8
-    //% rightWheelDia.defl=4.8
-    //% trackWidth.defl=8.8
+    //% leftWheelDia.defl=6.9
+    //% rightWheelDia.defl=6.9
+    //% trackWidth.defl=11.5
     //% ticksPerRev.defl=270
     //% inlineInputMode=external
     export function setupRobot(
@@ -1152,7 +1152,7 @@ namespace motorbit {
      */
     //% blockId=motorbit_setup_arm
     //% block="Setup Arm|Lift Servo %liftServo down %liftDownAngle° up %liftUpAngle°|Grip Servo %gripServo open %gripOpenAngle° close %gripCloseAngle°"
-    //% group="Robot Setup"
+    //% group="Gorilla Go"
     //% weight=99
     //% liftServo.defl=motorbit.Servos.S1
     //% gripServo.defl=motorbit.Servos.S2
@@ -1577,7 +1577,7 @@ namespace motorbit {
      */
     //% blockId=motorbit_open_gripper
     //% block="Open Gripper"
-    //% group="Robot Arm"
+    //% group="Gorilla Go"
     //% weight=86
     export function openGripper(): void {
         Servo(_arm_gripServo, _arm_gripOpenAngle);
@@ -1588,7 +1588,7 @@ namespace motorbit {
      */
     //% blockId=motorbit_close_gripper
     //% block="Close Gripper"
-    //% group="Robot Arm"
+    //% group="Gorilla Go"
     //% weight=85
     export function closeGripper(): void {
         Servo(_arm_gripServo, _arm_gripCloseAngle);
@@ -1652,6 +1652,72 @@ namespace motorbit {
     //% angle.min=0 angle.max=180 angle.defl=90
     export function setGripperAngle(angle: number): void {
         Servo(_arm_gripServo, Math.constrain(angle, 0, 180));
+    }
+
+    // ==========================================
+    // Gorilla Go — simplified blocks for kids
+    // ==========================================
+
+    /**
+     * Turn left by a relative angle using tank mode (both wheels move).
+     * @param degrees how many degrees to turn left; eg: 90
+     */
+    //% blockId=gorilla_turn_left_for
+    //% block="Turn Left %degrees °"
+    //% group="Gorilla Go" weight=98
+    //% degrees.min=0 degrees.max=360 degrees.defl=90
+    export function turnLeftForDegrees(degrees: number): void {
+        turnByYaw(-Math.abs(degrees), 120);
+    }
+
+    /**
+     * Turn right by a relative angle using tank mode (both wheels move).
+     * @param degrees how many degrees to turn right; eg: 90
+     */
+    //% blockId=gorilla_turn_right_for
+    //% block="Turn Right %degrees °"
+    //% group="Gorilla Go" weight=97
+    //% degrees.min=0 degrees.max=360 degrees.defl=90
+    export function turnRightForDegrees(degrees: number): void {
+        turnByYaw(Math.abs(degrees), 120);
+    }
+
+    /**
+     * Turn to face an absolute heading using tank mode (0-360, relative to zero set).
+     * @param heading target heading 0-360; eg: 0
+     */
+    //% blockId=gorilla_heading_to
+    //% block="Heading To %heading °"
+    //% group="Gorilla Go" weight=96
+    //% heading.min=0 heading.max=360 heading.defl=0
+    export function headingToDegrees(heading: number): void {
+        turnToFacingAngle(heading, TurnMode.Tank, 120);
+    }
+
+    /**
+     * Rotate to face an absolute heading using pivot mode (0-360, relative to zero set).
+     * @param heading target heading 0-360; eg: 0
+     */
+    //% blockId=gorilla_rotate_to
+    //% block="Rotate To %heading °"
+    //% group="Gorilla Go" weight=95
+    //% heading.min=0 heading.max=360 heading.defl=0
+    export function rotateToDegrees(heading: number): void {
+        turnToFacingAngle(heading, TurnMode.Pivot, 120);
+    }
+
+    /**
+     * Drive straight for a given distance in cm (negative = backward).
+     * @param cm distance in centimeters; eg: 30
+     * @param speed motor speed 0-255; eg: 150
+     */
+    //% blockId=gorilla_drive_straight
+    //% block="Drive Straight %cm cm at speed %speed"
+    //% group="Gorilla Go" weight=94
+    //% cm.defl=30
+    //% speed.min=0 speed.max=255 speed.defl=150
+    export function driveStraight(cm: number, speed: number): void {
+        driveDistanceStraight(cm, speed);
     }
 
 }
