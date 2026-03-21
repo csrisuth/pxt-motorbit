@@ -29,6 +29,25 @@ motorbit.setupRobot(
 motorbit.driveDistanceStraight(40, 100)
 basic.pause(500)
 motorbit.driveDistanceStraight(-40, 100)
+basic.pause(500)
+motorbit.rotateToDegrees(180)
+basic.pause(500)
+motorbit.headingToDegrees(90)
+
+input.onButtonPressed(Button.A, function () {
+    motorbit.rotateToDegrees(180)
+    basic.showNumber(motorbit.getDegrees())
+    basic.pause(500)
+    motorbit.headingToDegrees(90)
+    basic.showNumber(motorbit.getDegrees())
+})
+input.onButtonPressed(Button.B, function () {
+    motorbit.rotateToDegrees(180)
+    basic.showNumber(motorbit.getDegrees())
+    basic.pause(500)
+    motorbit.headingToDegrees(270)
+    basic.showNumber(motorbit.getDegrees())
+})
 
 
 basic.forever(function () {

@@ -1456,6 +1456,11 @@ namespace motorbit {
         const MAX_CMD = Math.min(120, Math.abs(maxSpeed));
         const KP = _tune_imuTurnKp;
         const LOOP_MS = 10;
+        const TRIM_ZONE = 12;
+        const TRIM_CMD = 45;
+        const PULSE_MIN_MS = 12;
+        const PULSE_MAX_MS = 60;
+        const STOP_BETWEEN_MS = 25;
 
         function norm180p(a: number): number {
             while (a > 180) a -= 360;
@@ -1466,6 +1471,9 @@ namespace motorbit {
         targetYaw = norm180p(targetYaw);
         let t0 = control.millis();
         let settle = 0;
+        let pulseMs = PULSE_MIN_MS;
+        let lastYaw = getRobotYaw();
+        let stuckCnt = 0;
 
         while (true) {
             if (control.millis() - t0 > TIMEOUT_MS) break;
@@ -1481,6 +1489,33 @@ namespace motorbit {
                 continue;
             }
             settle = 0;
+
+            // Near target: micro-pulse to avoid overshoot
+            if (aerr <= TRIM_ZONE) {
+                let usePulse = PULSE_MIN_MS + Math.round((aerr / TRIM_ZONE) * (PULSE_MAX_MS - PULSE_MIN_MS));
+                usePulse = Math.min(Math.max(usePulse, PULSE_MIN_MS), pulseMs);
+
+                if (err > 0) {
+                    driveMotors(TRIM_CMD, 0);
+                } else {
+                    driveMotors(0, TRIM_CMD);
+                }
+                basic.pause(usePulse);
+                MotorStopAll();
+                basic.pause(STOP_BETWEEN_MS);
+
+                let yaw2 = getRobotYaw();
+                let dy = Math.abs(norm180p(yaw2 - lastYaw));
+                lastYaw = yaw2;
+                if (dy < 0.25) { stuckCnt++; } else { stuckCnt = 0; }
+                if (stuckCnt >= 3) {
+                    pulseMs = Math.min(pulseMs + 8, PULSE_MAX_MS);
+                    stuckCnt = 0;
+                } else {
+                    pulseMs = Math.max(pulseMs - 2, PULSE_MIN_MS);
+                }
+                continue;
+            }
 
             let cmd = Math.round(KP * aerr);
             if (cmd < MIN_CMD) cmd = MIN_CMD;
