@@ -730,7 +730,8 @@ namespace motorbit {
             }
 
             // encoder correction: slow down whichever wheel has gone farther
-            let corr = Math.round(KP_ENC * (leftCm - rightCm))
+            // multiply by dir so correction is correct for both forward and backward
+            let corr = Math.round(KP_ENC * (leftCm - rightCm) * dir)
 
             // IMU heading correction: drifting right → steer left
             if (_imu_initialized) {
