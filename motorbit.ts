@@ -121,8 +121,8 @@ namespace motorbit {
     let _dt_turnK = 1.00
 
     // Motor direction: 1 = normal, -1 = inverted (set via setMotorDirection block)
-    let _dt_leftInvert: number = -1;
-    let _dt_rightInvert: number = 1;   // right motor is physically reversed by default
+    let _dt_leftInvert: number = 1;
+    let _dt_rightInvert: number = -1;   // right motor is physically reversed by default
 
     // IMU yaw direction: 1 = normal, -1 = inverted (set if BNO055 is mounted upside-down)
     let _dt_imuInvert: number = 1;
