@@ -1124,9 +1124,9 @@ namespace motorbit {
     //% leftPin.defl=DigitalPin.P13
     //% rightMotor.defl=motorbit.Motors.M3
     //% rightPin.defl=DigitalPin.P14
-    //% leftWheelDia.defl=6.9
-    //% rightWheelDia.defl=6.9
-    //% trackWidth.defl=11.5
+    //% leftWheelDia.defl=4.8
+    //% rightWheelDia.defl=4.8
+    //% trackWidth.defl=8.8
     //% ticksPerRev.defl=270
     //% inlineInputMode=external
     export function setupRobot(
