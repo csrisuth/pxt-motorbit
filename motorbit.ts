@@ -552,9 +552,9 @@ namespace motorbit {
     //% block="Setup Drive Train|Left: %leftMotor Pin %leftPin Wheel Dia (cm) %leftWheelDia|Right: %rightMotor Pin %rightPin Wheel Dia (cm) %rightWheelDia|Track Width (cm) %trackWidth|Ticks/Rev %ticksPerRev"
     //% group="DriveTrain"
     //% weight=90
-    //% leftWheelDia.defl=6.9
-    //% rightWheelDia.defl=6.9
-    //% trackWidth.defl=11.5
+    //% leftWheelDia.defl=4.8
+    //% rightWheelDia.defl=4.8
+    //% trackWidth.defl=8.8
     //% ticksPerRev.defl=270
     //% inlineInputMode=external
     export function setDriveTrain(
@@ -1703,6 +1703,8 @@ namespace motorbit {
     //% group="Gorilla Go" weight=98
     //% degrees.min=0 degrees.max=360 degrees.defl=90
     export function turnLeftForDegrees(degrees: number): void {
+        MotorStopAll();
+        basic.pause(80);
         turnByYaw(-Math.abs(degrees), 120);
     }
 
@@ -1715,6 +1717,8 @@ namespace motorbit {
     //% group="Gorilla Go" weight=97
     //% degrees.min=0 degrees.max=360 degrees.defl=90
     export function turnRightForDegrees(degrees: number): void {
+        MotorStopAll();
+        basic.pause(80);
         turnByYaw(Math.abs(degrees), 120);
     }
 
@@ -1755,16 +1759,19 @@ namespace motorbit {
     }
 
     /**
-     * Drive straight for a given distance in cm (negative = backward).
-     * @param cm distance in centimeters; eg: 30
+     * Drive straight for a given distance (negative = backward).
+     * @param distance distance to travel; eg: 30
+     * @param unit cm or inch
      * @param speed motor speed 0-255; eg: 150
      */
     //% blockId=gorilla_drive_straight
-    //% block="Drive Straight %cm cm at speed %speed"
+    //% block="Drive Straight %distance %unit at speed %speed"
     //% group="Gorilla Go" weight=94
-    //% cm.defl=30
+    //% distance.defl=30
     //% speed.min=0 speed.max=255 speed.defl=150
-    export function driveStraight(cm: number, speed: number): void {
+    //% inlineInputMode=inline
+    export function driveStraight(distance: number, unit: DistanceUnit, speed: number): void {
+        let cm = (unit === DistanceUnit.Inch) ? distance * 2.54 : distance;
         driveDistanceStraight(cm, speed);
     }
 
