@@ -1707,6 +1707,18 @@ namespace motorbit {
     }
 
     /**
+     * Get current heading in degrees 0-360, relative to zero set by setupRobot.
+     */
+    //% blockId=gorilla_get_degrees
+    //% block="Get Degrees (0-360)"
+    //% group="Gorilla Go" weight=93
+    export function getDegrees(): number {
+        let yaw = getRobotYaw();
+        if (yaw < 0) yaw += 360;
+        return yaw;
+    }
+
+    /**
      * Drive straight for a given distance in cm (negative = backward).
      * @param cm distance in centimeters; eg: 30
      * @param speed motor speed 0-255; eg: 150
