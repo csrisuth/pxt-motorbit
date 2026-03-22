@@ -1155,12 +1155,12 @@ namespace motorbit {
     //% block="Setup Arm|Lift Servo %liftServo down %liftDownAngle° up %liftUpAngle°|Grip Servo %gripServo open %gripOpenAngle° close %gripCloseAngle°"
     //% group="Gorilla Go"
     //% weight=99
-    //% liftServo.defl=motorbit.Servos.S1
-    //% gripServo.defl=motorbit.Servos.S2
+    //% liftServo.defl=motorbit.Servos.S2
+    //% gripServo.defl=motorbit.Servos.S1
     //% liftDownAngle.min=0 liftDownAngle.max=180 liftDownAngle.defl=30
     //% liftUpAngle.min=0 liftUpAngle.max=180 liftUpAngle.defl=150
     //% gripOpenAngle.min=0 gripOpenAngle.max=180 gripOpenAngle.defl=30
-    //% gripCloseAngle.min=0 gripCloseAngle.max=180 gripCloseAngle.defl=110
+    //% gripCloseAngle.min=0 gripCloseAngle.max=180 gripCloseAngle.defl=175
     //% inlineInputMode=external
     export function setupArm(
         liftServo: Servos, liftDownAngle: number, liftUpAngle: number,
@@ -1452,12 +1452,12 @@ namespace motorbit {
         const TIMEOUT_MS = 9000;
         const TOL = 3;
         const SETTLE_N = 8;
-        const MIN_CMD = 40;
+        const MIN_CMD = 55;
         const MAX_CMD = Math.min(120, Math.abs(maxSpeed));
         const KP = _tune_imuTurnKp;
         const LOOP_MS = 10;
         const TRIM_ZONE = 12;
-        const TRIM_CMD = 45;
+        const TRIM_CMD = 65;
         const PULSE_MIN_MS = 12;
         const PULSE_MAX_MS = 60;
         const STOP_BETWEEN_MS = 25;
