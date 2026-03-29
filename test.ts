@@ -25,7 +25,11 @@ motorbit.setupRobot(
     4.8, 4.8,
     8.8, 270
 )
+motorbit.setupArm(motorbit.Servos.S2,30,150,motorbit.Servos.S1,30,180)
+
+
 basic.showNumber(motorbit.getDegrees())
+//motorbit.driveStraight(30, motorbit.DistanceUnit.CM, 100)
 
 // motorbit.MotorRun(motorbit.Motors.M3,50)
 // basic.pause(10)
@@ -53,15 +57,22 @@ basic.showNumber(motorbit.getDegrees())
 // motorbit.rotateToDegrees(180)
 // basic.pause(500)
 // motorbit.headingToDegrees(90)
-
+motorbit.resetYaw()
 input.onButtonPressed(Button.A, function () {
     // motorbit.headingToDegrees(90)
     // basic.showNumber(motorbit.getDegrees())
     // basic.pause(500)
     // motorbit.headingToDegrees(90)
     // basic.showNumber(motorbit.getDegrees())
-    motorbit.turnLeftForDegrees(90)
-    basic.showNumber(motorbit.getDegrees())
+
+    // motorbit.resetYaw()
+    // motorbit.turnLeftForDegrees(90,120)
+
+    // motorbit.headingToDegrees(90,120)
+
+    // basic.showNumber(motorbit.getDegrees())
+
+    motorbit.closeGripper()
 
 })
 input.onButtonPressed(Button.B, function () {
@@ -70,12 +81,19 @@ input.onButtonPressed(Button.B, function () {
     // basic.pause(500)
     // motorbit.headingToDegrees(270)
     // basic.showNumber(motorbit.getDegrees())
-    motorbit.turnRightForDegrees(90)
-    basic.showNumber(motorbit.getDegrees())
+
+    // motorbit.resetYaw()
+    // motorbit.turnRightForDegrees(90,120)
+
+    // motorbit.headingToDegrees(0, 120)
+    // basic.showNumber(motorbit.getDegrees())
+
+    motorbit.openGripper()
 })
 
 
 basic.forever(function () {
+    
 
 //     motorbit.MotorRun(motorbit.Motors.M1, 255)
 //     motorbit.MotorRun(motorbit.Motors.M2, 255)
