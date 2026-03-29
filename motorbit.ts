@@ -133,6 +133,11 @@ namespace motorbit {
     let _tune_imuTurnKp: number = 2.2;    // IMU turn proportional gain
     let _tune_imuTurnKd: number = 8.0;    // IMU turn derivative gain (reduces overshoot)
     let _tune_encTurnKp: number = 0.6;    // encoder balance gain for tankTurn
+    let _tune_trimSlowCmd: number = 32;   // max speed in slow zone before TRIM_ZONE
+    let _tune_trimDecelMs: number = 150;  // ms to wait (motors off) before first micro-pulse
+    let _tune_trimCmd: number = 70;       // motor command used for micro-pulses
+    let _tune_trimPulseMin: number = 3;   // minimum micro-pulse duration (ms)
+    let _tune_trimPulseMax: number = 5;   // maximum micro-pulse duration (ms)
 
     // ==========================================
     // IMU Sensor (BNO055)
@@ -317,8 +322,8 @@ namespace motorbit {
     //% block="Setup Arm|Lift Servo %liftServo down %liftDownAngle° up %liftUpAngle°|Grip Servo %gripServo open %gripOpenAngle° close %gripCloseAngle°"
     //% group="Gorilla Go"
     //% weight=99
-    //% liftServo.defl=motorbit.Servos.S1
-    //% gripServo.defl=motorbit.Servos.S2
+    //% liftServo.defl=motorbit.Servos.S2
+    //% gripServo.defl=motorbit.Servos.S1
     //% liftDownAngle.min=0 liftDownAngle.max=180 liftDownAngle.defl=30
     //% liftUpAngle.min=0 liftUpAngle.max=180 liftUpAngle.defl=150
     //% gripOpenAngle.min=0 gripOpenAngle.max=180 gripOpenAngle.defl=30
@@ -1224,15 +1229,17 @@ namespace motorbit {
         const KD = _tune_imuTurnKd
         const TOL = 1
         const SETTLE_N = 6
+        const SLOW_ZONE = 50
+        const SLOW_CMD = _tune_trimSlowCmd
         const TRIM_ZONE = 10
-        const TRIM_CMD = 70
-        const PULSE_MIN_MS = 3
-        const PULSE_MAX_MS = 5
+        const TRIM_CMD = _tune_trimCmd
+        const PULSE_MIN_MS = _tune_trimPulseMin
+        const PULSE_MAX_MS = _tune_trimPulseMax
         const STOP_BETWEEN_MS = 70
         const STUCK_DEG = 0.2
         const STUCK_LIMIT = 2
-        const STUCK_GIVE_UP = 3   // exit if still stuck after bonus maxes out N times
-        const DECEL_MS = 150      // wait for robot to stop before first micro-pulse
+        const STUCK_GIVE_UP = 3
+        const DECEL_MS = _tune_trimDecelMs
 
         function norm180(a: number): number {
             while (a > 180) a -= 360
@@ -1325,6 +1332,14 @@ namespace motorbit {
             let cmd = Math.round(u)
             if (cmd < MIN_CMD) cmd = MIN_CMD
             if (cmd > MAX_CMD) cmd = MAX_CMD
+
+            // Slow zone: linearly ramp speed from SLOW_CMD down to MIN_CMD as aerr → TRIM_ZONE
+            if (aerr <= SLOW_ZONE) {
+                let ramp = MIN_CMD + Math.round(((aerr - TRIM_ZONE) / (SLOW_ZONE - TRIM_ZONE)) * (SLOW_CMD - MIN_CMD))
+                if (ramp < MIN_CMD) ramp = MIN_CMD
+                if (ramp > SLOW_CMD) ramp = SLOW_CMD
+                if (cmd > ramp) cmd = ramp
+            }
 
             driveMotors(dir * cmd, -dir * cmd)
 
@@ -1443,6 +1458,36 @@ namespace motorbit {
     export function tuneEncoderTurn(encKp: number, scale: number): void {
         _tune_encTurnKp = encKp;
         _dt_turnK = scale;
+    }
+
+    /**
+     * Tune the IMU turn trim zone parameters.
+     * slowCmd: top speed in slow approach zone (lower = less overshoot, default 32).
+     * decelMs: pause (ms) before first micro-pulse to let robot stop (default 150).
+     * trimCmd: motor power for micro-pulses (lower = finer steps, default 70).
+     * pulseMin/Max: micro-pulse duration range in ms (default 3-5).
+     * @param slowCmd max speed in slow approach zone; eg: 32
+     * @param decelMs ms to wait before first micro-pulse; eg: 150
+     * @param trimCmd motor command for micro-pulses; eg: 70
+     * @param pulseMin minimum pulse duration ms; eg: 3
+     * @param pulseMax maximum pulse duration ms; eg: 5
+     */
+    //% blockId=motorbit_tune_turn_trim
+    //% block="Tune Turn Trim|Slow speed %slowCmd|Decel wait (ms) %decelMs|Pulse power %trimCmd|Pulse min (ms) %pulseMin max (ms) %pulseMax"
+    //% group="Robot Setup"
+    //% weight=94
+    //% slowCmd.min=20 slowCmd.max=80 slowCmd.defl=32
+    //% decelMs.min=50 decelMs.max=400 decelMs.defl=150
+    //% trimCmd.min=40 trimCmd.max=100 trimCmd.defl=70
+    //% pulseMin.min=1 pulseMin.max=20 pulseMin.defl=3
+    //% pulseMax.min=1 pulseMax.max=30 pulseMax.defl=5
+    //% inlineInputMode=external
+    export function tuneTurnTrim(slowCmd: number, decelMs: number, trimCmd: number, pulseMin: number, pulseMax: number): void {
+        _tune_trimSlowCmd = slowCmd;
+        _tune_trimDecelMs = decelMs;
+        _tune_trimCmd = trimCmd;
+        _tune_trimPulseMin = pulseMin;
+        _tune_trimPulseMax = Math.max(pulseMax, pulseMin);
     }
 
     // ==========================================
