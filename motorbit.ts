@@ -287,7 +287,7 @@ namespace motorbit {
     //% blockId=motorbit_setup_robot
     //% block="Setup Robot|Left Motor %leftMotor Encoder %leftPin|Right Motor %rightMotor Encoder %rightPin|Wheel Dia L (cm) %leftWheelDia R (cm) %rightWheelDia|Track Width (cm) %trackWidth Ticks/Rev %ticksPerRev"
     //% group="Gorilla Go"
-    //% weight=100
+    //% weight=80
     //% leftMotor.defl=motorbit.Motors.M4
     //% leftPin.defl=DigitalPin.P2
     //% rightMotor.defl=motorbit.Motors.M3
@@ -321,7 +321,7 @@ namespace motorbit {
     //% blockId=motorbit_setup_arm
     //% block="Setup Arm|Lift Servo %liftServo down %liftDownAngle° up %liftUpAngle°|Grip Servo %gripServo open %gripOpenAngle° close %gripCloseAngle°"
     //% group="Gorilla Go"
-    //% weight=99
+    //% weight=79
     //% liftServo.defl=motorbit.Servos.S2
     //% gripServo.defl=motorbit.Servos.S1
     //% liftDownAngle.min=0 liftDownAngle.max=180 liftDownAngle.defl=30
