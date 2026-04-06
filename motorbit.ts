@@ -904,7 +904,6 @@ namespace motorbit {
         basic.pause(BRAKE_MS)
         MotorStopAll()
     }
-
     //% blockId=motorbit_drive_distance_imu
     //% block="Drive Distance (IMU straight) %cm cm at speed %speed"
     //% group="DriveTrain"
@@ -936,6 +935,99 @@ namespace motorbit {
 
         // record heading at start — use IMU if available
         let startYaw = _imu_initialized ? getRobotYaw() : 0
+
+        let lastCount = -1
+        let lastCountMs = control.millis()
+
+        const start = control.millis()
+        while (true) {
+            let leftCm = _dt_leftCount * leftCmPerTick
+            let rightCm = _dt_rightCount * rightCmPerTick
+            let avgCm = (leftCm + rightCm) / 2
+            let remaining = targetCm - avgCm
+
+            if (remaining <= 0) break
+            if (control.millis() - start > TIMEOUT_MS) break
+
+            // stall detection: if encoder is not counting, stop
+            let totalCount = _dt_leftCount + _dt_rightCount
+            if (totalCount != lastCount) {
+                lastCount = totalCount
+                lastCountMs = control.millis()
+            } else if (control.millis() - lastCountMs > STALL_MS) {
+                break
+            }
+
+            let curBase = base
+            if (remaining <= SLOWDOWN_CM) {
+                curBase = MIN_SPEED + Math.round((remaining / SLOWDOWN_CM) * (base - MIN_SPEED))
+            }
+            if (remaining <= STOP_EARLY_CM) {
+                curBase = MIN_SPEED
+            }
+
+            // encoder correction: slow down whichever wheel has gone farther
+            // (leftCm - rightCm) < 0 when right > left, giving corr < 0 → left gets more speed → correct for both forward and backward
+            let corr = Math.round(KP_ENC * (leftCm - rightCm))
+
+            // IMU heading correction: multiply by dir so correction flips correctly when going backward
+            if (_imu_initialized) {
+                let hdgErr = getRobotYaw() - startYaw
+                while (hdgErr > 180) hdgErr -= 360
+                while (hdgErr < -180) hdgErr += 360
+                // hdgErr > 0 = drifted CW → corr += negative when backward (dir=-1) → left gets more → CCW
+                corr += Math.round(KP_HDG * hdgErr * _dt_imuInvert * dir)
+            }
+
+            if (corr > MAX_CORR) corr = MAX_CORR
+            if (corr < -MAX_CORR) corr = -MAX_CORR
+
+            let leftCmd = curBase - corr
+            let rightCmd = curBase + corr
+
+            if (leftCmd < MIN_SPEED) leftCmd = MIN_SPEED
+            if (rightCmd < MIN_SPEED) rightCmd = MIN_SPEED
+            if (leftCmd > 255) leftCmd = 255
+            if (rightCmd > 255) rightCmd = 255
+
+            driveMotors(leftCmd * dir, rightCmd * dir)
+            basic.pause(LOOP_MS)
+        }
+
+        driveMotors(-dir * MIN_SPEED, -dir * MIN_SPEED)
+        basic.pause(BRAKE_MS)
+        MotorStopAll()
+    }
+
+
+    //% blockId=motorbit_drive_distance_imu_degree
+    //% block="Drive Distance (IMU straight) %cm cm at speed %speed at angle %startYaw"
+    //% group="DriveTrain"
+    //% weight=84
+    //% speed.min=0 speed.max=255 speed.defl=150 startYaw.defl=0
+    export function driveDistanceStraightDegree(cm: number, speed: number, startYaw: number): void {
+        const LOOP_MS = 5
+        const KP_ENC = _tune_driveKp     // gain from encoder (cm difference between left and right)
+        const KP_HDG = _tune_driveHdgKp  // gain from IMU heading (degrees drifted)
+        const MAX_CORR = 35
+        const MIN_SPEED = 20
+        const BRAKE_MS = 40
+        const TIMEOUT_MS = 8000
+        const SLOWDOWN_CM = 4.0
+        const STOP_EARLY_CM = 1.0
+        const STALL_MS = 1500    // stop if encoder counts don't change for this long
+
+        let leftCmPerTick = (Math.PI * _dt_leftWheelDia) / _dt_ticksPerRev
+        let rightCmPerTick = (Math.PI * _dt_rightWheelDia) / _dt_ticksPerRev
+        let targetCm = Math.abs(cm)
+
+        _dt_leftCount = 0
+        _dt_rightCount = 0
+
+        let dir = cm > 0 ? 1 : -1
+        let base = Math.abs(speed)
+
+        kickMotors(base * dir, base * dir)
 
         let lastCount = -1
         let lastCountMs = control.millis()
