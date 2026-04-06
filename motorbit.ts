@@ -349,7 +349,7 @@ namespace motorbit {
      */
     //% blockId=gorilla_drive_straight
     //% block="Drive Straight %distance %unit at speed %speed"
-    //% group="Gorilla Go" weight=94
+    //% group="Gorilla Go" weight=98
     //% distance.defl=30
     //% speed.min=0 speed.max=255 speed.defl=150
     //% inlineInputMode=inline
@@ -365,7 +365,7 @@ namespace motorbit {
      */
     //% blockId=gorilla_turn_left_for
     //% block="Turn Left %degrees ° speed %speed"
-    //% group="Gorilla Go" weight=98
+    //% group="Gorilla Go" weight=94
     //% degrees.min=0 degrees.max=360 degrees.defl=90
     //% speed.min=0 speed.max=255 speed.defl=120
     //% inlineInputMode=inline
