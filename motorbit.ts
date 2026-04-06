@@ -365,7 +365,7 @@ namespace motorbit {
      * @param speed motor speed 0-255; eg: 150
      */
     //% blockId=gorilla_drive_straight
-    //% block="Drive Straight %distance %unit at speed %speed"
+    //% block="Drive Straight %distance %unit at speed %speed at degree %degree"
     //% group="Gorilla Go" weight=98
     //% distance.defl=30 degree.defl=0
     //% speed.min=0 speed.max=255 speed.defl=150
