@@ -367,8 +367,8 @@ namespace motorbit {
     //% blockId=gorilla_drive_straight_degree
     //% block="Drive Straight %distance %unit at speed %speed at degree %degree"
     //% group="Gorilla Go" weight=98
-    //% distance.defl=30 degree.defl=0
-    //% speed.min=0 speed.max=255 speed.defl=150
+    //% distance.defl=30
+    //% speed.min=0 speed.max=255 speed.defl=150 degree.defl=0
     //% inlineInputMode=inline
     export function driveStraightDegree(distance: number, unit: DistanceUnit, speed: number, degree: number): void {
         let cm = (unit === DistanceUnit.Inch) ? distance * 2.54 : distance;
@@ -384,8 +384,8 @@ namespace motorbit {
     //% blockId=gorilla_rotate_drive_straight_degree
     //% block="Rotate and Drive Straight %distance %unit at speed %speed at degree %degree"
     //% group="Gorilla Go" weight=97
-    //% distance.defl=30 degree.defl=0
-    //% speed.min=0 speed.max=255 speed.defl=150
+    //% distance.defl=30
+    //% speed.min=0 speed.max=255 speed.defl=150 degree.defl=0
     //% inlineInputMode=inline
     export function RotateAndDrive(distance: number, degree: number, unit: DistanceUnit, speed: number): void {
         let cm = (unit === DistanceUnit.Inch) ? distance * 2.54 : distance;
@@ -402,8 +402,8 @@ namespace motorbit {
     //% blockId=gorilla_rotate_drive_straight_degree
     //% block="Turn and Drive Straight %distance %unit at speed %speed at degree %degree"
     //% group="Gorilla Go" weight=96
-    //% distance.defl=30 degree.defl=0
-    //% speed.min=0 speed.max=255 speed.defl=150
+    //% distance.defl=30
+    //% speed.min=0 speed.max=255 speed.defl=150 degree.defl=0
     //% inlineInputMode=inline
     export function TurnAndDrive(distance: number, degree: number, unit: DistanceUnit, speed: number): void {
         let cm = (unit === DistanceUnit.Inch) ? distance * 2.54 : distance;
