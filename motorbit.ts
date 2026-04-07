@@ -493,7 +493,7 @@ namespace motorbit {
     //% blockId=motorbit_open_gripper
     //% block="Open Gripper"
     //% group="Gorilla Go"
-    //% weight=96
+    //% weight=95
     export function openGripper(): void {
         Servo(_arm_gripServo, _arm_gripOpenAngle);
     }
@@ -504,7 +504,7 @@ namespace motorbit {
     //% blockId=motorbit_close_gripper
     //% block="Close Gripper"
     //% group="Gorilla Go"
-    //% weight=95
+    //% weight=94
     export function closeGripper(): void {
         Servo(_arm_gripServo, _arm_gripCloseAngle);
     }
@@ -516,7 +516,7 @@ namespace motorbit {
     //% blockId=motorbit_open_gripper_speed
     //% block="Open Gripper speed %speed"
     //% group="Gorilla Go"
-    //% weight=94
+    //% weight=93
     //% speed.min=1 speed.max=10 speed.defl=5
     export function openGripperWithSpeed(speed: number): void {
         Servospeed(_arm_gripServo, _arm_gripCloseAngle, _arm_gripOpenAngle, speed);
