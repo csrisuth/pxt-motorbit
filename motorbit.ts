@@ -399,7 +399,7 @@ namespace motorbit {
      * @param unit cm or inch
      * @param speed motor speed 0-255; eg: 150
      */
-    //% blockId=gorilla_rotate_drive_straight_degree
+    //% blockId=gorilla_turn_drive_straight_degree
     //% block="Turn and Drive Straight %distance %unit at speed %speed at degree %degree"
     //% group="Gorilla Go" weight=96
     //% distance.defl=30
