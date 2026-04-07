@@ -387,7 +387,7 @@ namespace motorbit {
     //% distance.defl=30
     //% speed.min=0 speed.max=255 speed.defl=150 degree.defl=0
     //% inlineInputMode=inline
-    export function RotateAndDrive(distance: number, degree: number, unit: DistanceUnit, speed: number): void {
+    export function RotateAndDrive(distance: number, unit: DistanceUnit, speed: number, degree: number): void {
         let cm = (unit === DistanceUnit.Inch) ? distance * 2.54 : distance;
         rotateToDegrees(degree, speed)
         driveDistanceStraightDegree(cm, speed, degree);
@@ -405,7 +405,7 @@ namespace motorbit {
     //% distance.defl=30
     //% speed.min=0 speed.max=255 speed.defl=150 degree.defl=0
     //% inlineInputMode=inline
-    export function TurnAndDrive(distance: number, degree: number, unit: DistanceUnit, speed: number): void {
+    export function TurnAndDrive(distance: number, unit: DistanceUnit, speed: number, degree: number): void {
         let cm = (unit === DistanceUnit.Inch) ? distance * 2.54 : distance;
         headingToDegrees(degree, speed)
         driveDistanceStraightDegree(cm, speed, degree);
